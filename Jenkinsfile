@@ -3,9 +3,7 @@ def SECOND_IMAGE
 String FIRST_IMAGE_TAG_NAME
 String SECOND_IMAGE_TAG_NAME
 
-// def images = []
-// List<String> tags = []
-
+List<String> tags = []
 def images_and_tags = [:] // map declaration
 
 pipeline {
@@ -25,24 +23,31 @@ pipeline {
                         version = readJSON(file: 'package.json').version
                         if(env.BRANCH_NAME == 'master') {
                             FIRST_IMAGE_TAG_NAME = version
-                            // tags.push(version)  // TEST
+                            
+                            tags.push(version)  // TEST
+
                         } else if(env.BRANCH_NAME.startsWith('release')) {
                             FIRST_IMAGE_TAG_NAME = "latest-dev"
                             SECOND_IMAGE_TAG_NAME = "release-${env.BUILD_NUMBER}"
 
-                            // tags.push("latest-dev") // TEST
-                            // tags.push("release-${env.BUILD_NUMBER}") // TEST
+                            tags.push("latest-dev") // TEST
+                            tags.push("release-${env.BUILD_NUMBER}") // TEST
+
                         } else {
                             FIRST_IMAGE_TAG_NAME = env.BUILD_NUMBER
 
-                            // tags.push(env.BUILD_NUMBER) // TEST
+                            tags.push(env.BUILD_NUMBER) // TEST
                         }
                         FIRST_IMAGE = docker.build("${DOCKER_USERNAME}/${DOCKER_REPO}:${FIRST_IMAGE_TAG_NAME}")
                         SECOND_IMAGE = docker.build("${DOCKER_USERNAME}/${DOCKER_REPO}:${SECOND_IMAGE_TAG_NAME}")
 
-                        // tags.each{ tag -> 
-                        //     images.push(docker.build("${DOCKER_USERNAME}/${DOCKER_REPO}:$tag"))
-                        // }
+                        tags.each{ tag -> 
+                           images_and_tags.put(tag, docker.build("${DOCKER_USERNAME}/${DOCKER_REPO}:$tag"))
+                        }
+
+
+                        sh 'echo YarinDavidTheRalph'
+                        sh 'echo ${images_and_tags}'
 
 
                     }
