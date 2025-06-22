@@ -38,13 +38,15 @@ pipeline {
         stage("Push") {
             steps {
                 script {
+                    final String DOCKER_REGISTRY = 'https://index.docker.io/v1/'
+
                     images_and_tags.each { key, value -> 
                         is_branch_name_master = env.BRANCH_NAME == 'master'
                         is_release_divide_four = key.startsWith('release') && (key.split("-")[1] as Integer) % 4 == 0
 
                         if(is_branch_name_master || is_release_divide_four) {
                             PUSHED_TAG = key
-                            docker.withRegistry('https://index.docker.io/v1/', 'yarin-dockerhub') {
+                            docker.withRegistry(DOCKER_REGISTRY, 'yarin-dockerhub') {
                                 value.push()
                             }
                         }
@@ -56,15 +58,17 @@ pipeline {
             steps {
                 script {
                     final String GIT_CREDENTIALS = 'git_credentials'
+                    final String GIT_EMAIL = 'yarindavid24@gmail.com'
+                    final String DOCKER_REPOSITORY = 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git'
 
                     if(env.BRANCH_NAME == 'master') {
-                        git(url: 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git', branch: 'main')
+                        git(url: DOCKER_REPOSITORY, branch: 'main')
                         sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' values.yaml"
                         sh 'cat values.yaml'
                         withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh """
                             git config --global user.name "${GIT_USERNAME}"
-                            git config --global user.email "yarindavid24@gmail.com"
+                            git config --global user.email "${GIT_EMAIL}"
                             git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/fake-helm-charts-yarin-training.git
                             git add values.yaml
                             git commit -m 'change to tag: ${PUSHED_TAG}'
