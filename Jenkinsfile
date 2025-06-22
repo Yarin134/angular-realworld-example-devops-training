@@ -47,7 +47,7 @@ pipeline {
 
 
                         sh 'echo YarinDavidTheRalph'
-                        sh 'echo ${images_and_tags}'
+                        images_and_tags.each { key, value -> echo "Key: ${key} , Value: ${value}"}
 
 
                     }
