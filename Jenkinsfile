@@ -17,7 +17,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'yarin-dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        def version = readJSON(file: 'package.json').version
+                        version = readJSON(file: 'package.json').version
                         if(env.BRANCH_NAME == 'master') {
                             FIRST_IMAGE_TAG_NAME = version
                         } else if(env.BRANCH_NAME.startsWith('release')) {
@@ -35,8 +35,8 @@ pipeline {
         stage("Push") {
             steps {
                 script {
-                    def shouldPushFirstTagImage = env.BRANCH_NAME == 'master'
-                    def shouldPushSecondTagImage = SECOND_IMAGE_TAG_NAME && SECOND_IMAGE_TAG_NAME.startsWith('release') && (
+                    shouldPushFirstTagImage = env.BRANCH_NAME == 'master'
+                    shouldPushSecondTagImage = SECOND_IMAGE_TAG_NAME && SECOND_IMAGE_TAG_NAME.startsWith('release') && (
                     (SECOND_IMAGE_TAG_NAME.split("-")[1] as Integer) % 4 == 0)
 
                     if (shouldPushFirstTagImage || shouldPushSecondTagImage) {
