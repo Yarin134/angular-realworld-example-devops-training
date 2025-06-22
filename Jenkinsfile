@@ -6,14 +6,11 @@ pipeline {
         label 'devops-training-yarin'
     }
 
-    environment {
-        DOCKER_REPO = 'devops-yarin'
-    }
-
     stages {
         stage("Build") {
             steps {
                 script {
+                    final String DOCKER_REPO = 'devops-yarin'
                     final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
