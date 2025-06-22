@@ -6,7 +6,7 @@ String SECOND_IMAGE_TAG_NAME
 // def images = []
 // List<String> tags = []
 
-Map<String,def> images_and_tags  = new HashMap<>();
+Map<String, def> images_and_tags  = new HashMap<>();
 
 pipeline {
     agent {
