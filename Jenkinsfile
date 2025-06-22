@@ -30,11 +30,11 @@ pipeline {
                         SECOND_IMAGE = docker.build("${DOCKER_USERNAME}/${DOCKER_REPO}:${SECOND_IMAGE_TAG_NAME}")
                     }
                 }
-            }  
+            }
         }
         stage("Push") {
             steps {
-                script { 
+                script {
                     def shouldPushFirstTagImage = env.BRANCH_NAME == 'master'
                     def shouldPushSecondTagImage = SECOND_IMAGE_TAG_NAME && SECOND_IMAGE_TAG_NAME.startsWith('release') && (
                     (SECOND_IMAGE_TAG_NAME.split("-")[1] as Integer) % 4 == 0)
@@ -47,7 +47,7 @@ pipeline {
                             if (shouldPushSecondTagImage) {
                                 SECOND_IMAGE.push()
                             }             
-                        }   
+                        }
                     }
                 }
             }
