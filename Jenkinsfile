@@ -2,9 +2,7 @@ String PUSHED_TAG
 def images_and_tags = [:]
 
 pipeline {
-    agent {
-        label 'devops-training-yarin'
-    }
+    agent any
 
     stages {
         stage("Build") {
@@ -15,7 +13,7 @@ pipeline {
 
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         tags = []
-                        version = readJSON(file: 'package.json').version
+                        String version = readJSON(file: 'package.json').version
                         if(env.BRANCH_NAME == 'master') {                            
                             tags.push(version)
 
@@ -38,8 +36,8 @@ pipeline {
                     final String DOCKER_REGISTRY = 'https://index.docker.io/v1/'
 
                     images_and_tags.each { key, value -> 
-                        is_branch_name_master = env.BRANCH_NAME == 'master'
-                        is_release_divide_four = key.startsWith('release') && (key.split("-")[1] as Integer) % 4 == 0
+                        boolean is_branch_name_master = env.BRANCH_NAME == 'master'
+                        boolean is_release_divide_four = key.startsWith('release') && (key.split("-")[1] as Integer) % 4 == 0
 
                         if(is_branch_name_master || is_release_divide_four) {
                             PUSHED_TAG = key
@@ -54,20 +52,20 @@ pipeline {
         stage("Upgrade Helm Charts") {
             steps {
                 script {
+                    final String VALUES_FILE_PATH = 'values.yaml'
                     final String GIT_CREDENTIALS = 'git_credentials'
                     final String GIT_EMAIL = 'yarindavid24@gmail.com'
-                    final String DOCKER_REPOSITORY = 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git'
+                    final String GIT_HELM_CHARTS_REPOSITORY = 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git'
 
                     if(env.BRANCH_NAME == 'master') {
-                        git(url: DOCKER_REPOSITORY, branch: 'main')
-                        sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' values.yaml"
-                        sh 'cat values.yaml'
+                        git(url: GIT_HELM_CHARTS_REPOSITORY, branch: 'main')
+                        sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' ${VALUES_FILE_PATH}"
                         withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh """
                             git config --global user.name "${GIT_USERNAME}"
                             git config --global user.email "${GIT_EMAIL}"
                             git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/fake-helm-charts-yarin-training.git
-                            git add values.yaml
+                            git add ${VALUES_FILE_PATH}
                             git commit -m 'change to tag: ${PUSHED_TAG}'
                             git push
                             """
