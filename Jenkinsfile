@@ -3,7 +3,7 @@ def images_and_tags = [:]
 
 pipeline {
     agent {
-        label 'devops-training-yarin'
+        label 'any'
     }
 
     stages {
