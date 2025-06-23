@@ -54,13 +54,14 @@ pipeline {
         stage("Upgrade Helm Charts") {
             steps {
                 script {
+                    final String VALUES_FILE_PATH = 'values.yaml'
                     final String GIT_CREDENTIALS = 'git_credentials'
                     final String GIT_EMAIL = 'yarindavid24@gmail.com'
                     final String DOCKER_REPOSITORY = 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git'
 
                     if(env.BRANCH_NAME == 'master') {
                         git(url: DOCKER_REPOSITORY, branch: 'main')
-                        sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' values.yaml"
+                        sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' ${VALUES_FILE_PATH}"
                         withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh """
                             git config --global user.name "${GIT_USERNAME}"
