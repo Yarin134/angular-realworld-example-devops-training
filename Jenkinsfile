@@ -15,7 +15,7 @@ pipeline {
 
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         tags = []
-                        version = readJSON(file: 'package.json').version
+                        String version = readJSON(file: 'package.json').version
                         if(env.BRANCH_NAME == 'master') {                            
                             tags.push(version)
 
@@ -38,8 +38,8 @@ pipeline {
                     final String DOCKER_REGISTRY = 'https://index.docker.io/v1/'
 
                     images_and_tags.each { key, value -> 
-                        is_branch_name_master = env.BRANCH_NAME == 'master'
-                        is_release_divide_four = key.startsWith('release') && (key.split("-")[1] as Integer) % 4 == 0
+                        boolean is_branch_name_master = env.BRANCH_NAME == 'master'
+                        boolean is_release_divide_four = key.startsWith('release') && (key.split("-")[1] as Integer) % 4 == 0
 
                         if(is_branch_name_master || is_release_divide_four) {
                             PUSHED_TAG = key
