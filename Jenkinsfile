@@ -2,9 +2,7 @@ String PUSHED_TAG
 def images_and_tags = [:]
 
 pipeline {
-    agent {
-        label 'any'
-    }
+    agent any
 
     stages {
         stage("Build") {
