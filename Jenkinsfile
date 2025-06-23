@@ -66,7 +66,6 @@ pipeline {
                             git config --global user.email "${GIT_EMAIL}"
                             git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/fake-helm-charts-yarin-training.git
                             git add ${VALUES_FILE_PATH}
-                            git status
                             git commit -m 'change to tag: ${PUSHED_TAG}'
                             git push
                             """
