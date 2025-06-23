@@ -61,7 +61,6 @@ pipeline {
                     if(env.BRANCH_NAME == 'master') {
                         git(url: DOCKER_REPOSITORY, branch: 'main')
                         sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' values.yaml"
-                        sh 'cat values.yaml'
                         withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh """
                             git config --global user.name "${GIT_USERNAME}"
