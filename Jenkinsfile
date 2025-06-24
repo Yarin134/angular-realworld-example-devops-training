@@ -12,7 +12,7 @@ pipeline {
                     final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        tags = []
+                        List<String> tags = []
                         String version = readJSON(file: 'package.json').version
                         if(env.BRANCH_NAME == 'master') {                            
                             tags.push(version)
