@@ -1,5 +1,5 @@
 String PUSHED_TAG
-def images_and_tags = [:]
+images_and_tags = [:]
 
 pipeline {
     agent any
