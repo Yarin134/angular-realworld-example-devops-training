@@ -1,5 +1,6 @@
 String PUSHED_TAG
 images_and_tags = [:]
+final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
 pipeline {
     agent any
@@ -9,7 +10,6 @@ pipeline {
             steps {
                 script {
                     final String DOCKER_REPO = 'devops-yarin'
-                    final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         List<String> tags = []
@@ -41,7 +41,7 @@ pipeline {
 
                         if(is_branch_name_master || is_release_divide_four) {
                             PUSHED_TAG = key
-                            docker.withRegistry(DOCKER_REGISTRY, 'yarin-dockerhub') {
+                            docker.withRegistry(DOCKER_REGISTRY, DOCKER_CREDENTIALS) {
                                 value.push()
                             }
                         }
