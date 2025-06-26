@@ -28,4 +28,4 @@ COPY --from=build /app/dist/angular-conduit/browser /app
 
 EXPOSE 3000
 
-CMD ["npx", "serve", "-s", "."]
+CMD ["npx", "serve"]
