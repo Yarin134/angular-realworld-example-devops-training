@@ -15,6 +15,9 @@
   },
   "private": true,
   "dependencies": {
+    "serve": "^14.2.4"
+  },
+  "devDependencies": {
     "@angular/animations": "20.0.0",
     "@angular/common": "20.0.0",
     "@angular/compiler": "20.0.0",
@@ -28,9 +31,7 @@
     "marked": "^11.1.0",
     "rxjs": "^7.4.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.1"
-  },
-  "devDependencies": {
+    "zone.js": "~0.15.1",
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "20.0.0",

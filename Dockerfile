@@ -21,13 +21,12 @@ FROM node:20.19.0-alpine AS prod
 
 WORKDIR /app
 
-COPY --from=deps /app/package.json /app
-COPY --from=deps /app/package-lock.json /app
+COPY package*.json /app
 
-RUN npm ci --no-cache --omit=dev --legacy-peer-deps
+RUN npm ci --omit-dev --legacy-peer-deps
 
 COPY --from=build /app/dist/angular-conduit/browser /app
 
 EXPOSE 3000
 
-CMD ["serve"]
+CMD ["npx", "serve", "-s", "."]
