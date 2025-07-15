@@ -1,5 +1,5 @@
 String PUSHED_TAG
-images_and_tags = [:]
+Map<String, String> images_and_tags = [:]
 final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
 pipeline {
