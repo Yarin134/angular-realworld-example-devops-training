@@ -5,8 +5,6 @@ Map<String, DockerBuildImage> images_and_tags = [:]
 final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
 def getRepoUrlWithCreds(String repoUrl, String credentialsId) {
-    def urlWithCreds = ''
-
     withCredentials([
         usernamePassword(
             credentialsId: credentialsId,
