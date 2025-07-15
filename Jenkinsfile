@@ -4,6 +4,20 @@ String PUSHED_TAG
 Map<String, DockerBuildImage> images_and_tags = [:]
 final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
+def getRepoUrlWithCreds(String repoUrl, String credentialsId) {
+    def urlWithCreds = ''
+
+    withCredentials([
+        usernamePassword(
+            credentialsId: credentialsId,
+            usernameVariable: 'GIT_USERNAME',
+            passwordVariable: 'GIT_PASSWORD'
+        )
+    ]) {
+        return repoUrl.replaceFirst(/(https?:\/\/)/, "\$1${GIT_USERNAME}:${GIT_PASSWORD}@")
+    }
+}
+
 pipeline {
     agent any
 
@@ -57,21 +71,21 @@ pipeline {
                     final String VALUES_FILE_PATH = 'values.yaml'
                     final String GIT_CREDENTIALS = 'git_credentials'
                     final String GIT_EMAIL = 'yarindavid24@gmail.com'
-                    final String GIT_HELM_CHARTS_REPOSITORY = 'https://github.com/Yarin134/fake-helm-charts-yarin-training.git'
+                    final String HELM_CHART_VALUE_PROJECT_NAME = 'realworld'
 
                     if(env.BRANCH_NAME == 'master') {
-                        git(url: GIT_HELM_CHARTS_REPOSITORY, branch: 'main')
-                        sh "sed -i '/realworld:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' ${VALUES_FILE_PATH}"
-                        withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                            sh """
-                            git config --global user.name "${GIT_USERNAME}"
-                            git config --global user.email "${GIT_EMAIL}"
-                            git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/fake-helm-charts-yarin-training.git
-                            git add ${VALUES_FILE_PATH}
-                            git commit -m 'change to tag: ${PUSHED_TAG}'
-                            git push
-                            """
-                        }
+                        final String GIT_HELM_CHARTS_REPOSITORY = getRepoUrlWithCreds('https://github.com/Yarin134/fake-helm-charts-yarin-training.git', GIT_CREDENTIALS)
+                        
+                        sh """
+                        git clone --branch main ${GIT_HELM_CHARTS_REPOSITORY}
+                        sh "sed -i '/${HELM_CHART_VALUE_PROJECT_NAME}:/{n;s/tag:.*/tag: ${PUSHED_TAG}/;}' ${VALUES_FILE_PATH}"
+                        git config --global user.name "${GIT_USERNAME}"
+                        git config --global user.email "${GIT_EMAIL}"
+                        git remote set-url origin ${GIT_HELM_CHARTS_REPOSITORY}
+                        git add ${VALUES_FILE_PATH}
+                        git commit -m 'change to tag: ${PUSHED_TAG}'
+                        git push
+                        """
                     }
                 }
             }
