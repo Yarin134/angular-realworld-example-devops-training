@@ -1,5 +1,7 @@
+import org.jenkinsci.plugins.docker.workflow.DockerBuildImage
+
 String PUSHED_TAG
-Map<String, String> images_and_tags = [:]
+Map<String, DockerBuildImage> images_and_tags = [:]
 final String DOCKER_CREDENTIALS = 'yarin-dockerhub'
 
 pipeline {
